@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="小然记账">
+    <meta name="theme-color" content="#E8F4FD">
+    <title>🩵 小然记账本</title>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue-light: #E8F4FD;
+            --blue-main: #7CB8F0;
+            --blue-deep: #4A8CC7;
+            --blue-card: #D0E8FA;
+            --white: #FFFFFF;
+            --pink: #FFB8C6;
+            --pink-light: #FFE0E6;
+            --text-dark: #3D4F5F;
+            --text-mid: #5A7285;
+            --text-light: #8BA0B0;
+            --shadow-soft: 0 4px 15px rgba(74, 140, 199, 0.12);
+            --shadow-card: 0 6px 20px rgba(74, 140, 199, 0.15);
+            --shadow-btn: 0 3px 10px rgba(74, 140, 199, 0.2);
+            --radius-lg: 28px;
+            --radius-md: 20px;
+            --radius-sm: 14px;
+            --radius-xs: 10px;
+            --font-doodle: 'ZCOOL KuaiLe', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', cursive;
+            --font-main: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        html {
+            font-size: 16px;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: linear-gradient(180deg, #E8F4FD 0%, #F5F9FC 30%, #E8F4FD 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            min-height: 100dvh;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
+        }
+
+        /* ============ 涂鸦装饰背景 ============ */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -80px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255, 184, 198, 0.25) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: blobFloat 8s ease-in-out infinite;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -60px;
+            left: -50px;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(124, 184, 240, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: blobFloat 10s ease-in-out infinite reverse;
+        }
+        @keyframes blobFloat {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(15px, -20px) scale(1.08);
+            }
+            50% {
+                transform: translate(-10px, -10px) scale(0.95);
+            }
+            75% {
+                transform: translate(-18px, 15px) scale(1.05);
+            }
+        }
+
+        /* ============ 主容器 ============ */
+        #app {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        /* ============ 顶部导航栏 ============ */
+        .top-bar {
+            padding: 16px 18px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+        .top-bar .title-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .top-bar .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: var(--shadow-soft);
+            animation: gentleBounce 3s ease-in-out infinite;
+            border: 2px dashed var(--blue-main);
+        }
+        @keyframes gentleBounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-6px);
+            }
+            60% {
+                transform: translateY(-2px);
+            }
+        }
+        .top-bar h1 {
+            font-family: var(--font-doodle);
+            font-size: 1.5rem;
+            color: var(--blue-deep);
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px rgba(124, 184, 240, 0.2);
+            line-height: 1.2;
+        }
+        .top-bar .date-display {
+            font-size: 0.75rem;
+            color: var(--text-mid);
+            font-family: var(--font-doodle);
+            background: var(--white);
+            padding: 6px 12px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-soft);
+            border: 1.5px dashed var(--blue-light);
+            white-space: nowrap;
+        }
+
+        /* ============ 页面内容区 ============ */
+        .page-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0 14px 100px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .page-content::-webkit-scrollbar {
+            width: 0;
+        }
+
+        /* ============ 页面切换动画 ============ */
+        .page {
+            display: none;
+            animation: fadeSlideIn 0.35s var(--transition-smooth);
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============ 卡片样式 ============ */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 18px 16px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            border: 2px solid transparent;
+            transition: all 0.3s var(--transition-smooth);
+            /* 涂鸦风格边框 */
+            border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Ccircle cx='4' cy='4' r='1.2' fill='%237CB8F0' opacity='0.35'/%3E%3C/svg%3E") 4 round;
+            border-width: 2px;
+            border-style: dashed;
+            border-color: #D0E8FA;
+        }
+        .card:active {
+            transform: scale(0.985);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .card-title {
+            font-family: var(--font-doodle);
+            font-size: 1.05rem;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .card-title .icon-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            background: var(--blue-main);
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+        @keyframes pulseDot {
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.6);
+                opacity: 0.4;
+            }
+        }
+
+        /* ============ 概览卡片 ============ */
+        .overview-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E8F4FD 100%);
+            border-radius: var(--radius-lg);
+            padding: 20px 16px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow-card);
+            border: 2px dashed #C8E0F8;
+            position: relative;
+            overflow: hidden;
+        }
+        .overview-card::after {
+            content: '✧';
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 28px;
+            color: var(--pink);
+            opacity: 0.5;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+        @keyframes twinkle {
+            0%,
+            100% {
+                opacity: 0.35;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.3);
+            }
+        }
+        .overview-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .overview-item {
+            flex: 1;
+            min-width: 70px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-sm);
+            padding: 12px 8px;
+            border: 1.5px dashed #DCE8F5;
+            transition: all 0.3s var(--transition-bounce);
+            cursor: pointer;
+            position: relative;
+        }
+        .overview-item:active {
+            transform: scale(0.93);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .overview-item .amount {
+            font-family: var(--font-doodle);
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--text-dark);
+            letter-spacing: 1px;
+        }
+        .overview-item .amount.income-color {
+            color: #4A9C6D;
+        }
+        .overview-item .amount.expense-color {
+            color: #E07070;
+        }
+        .overview-item .amount.balance-color {
+            color: var(--blue-deep);
+        }
+        .overview-item .label {
+            font-size: 0.7rem;
+            color: var(--text-mid);
+            margin-top: 2px;
+            font-family: var(--font-doodle);
+        }
+
+        /* ============ 借贷提醒卡片 ============ */
+        .loan-alert-card {
+            background: linear-gradient(135deg, #FFF8F9 0%, #FFE8EC 100%);
+            border: 2px dashed #FFB8C6;
+            border-radius: var(--radius-lg);
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            0%,
+            100% {
+                box-shadow: 0 4px 15px rgba(255, 184, 198, 0.2);
+            }
+            50% {
+                box-shadow: 0 4px 25px rgba(255, 184, 198, 0.45);
+            }
+        }
+        .loan-alert-card .alert-icon {
+            font-size: 32px;
+            animation: gentleBounce 2s ease-in-out infinite;
+        }
+        .loan-alert-card .alert-text {
+            flex: 1;
+            font-size: 0.8rem;
+            color: #C06070;
+            font-family: var(--font-doodle);
+            line-height: 1.4;
+        }
+
+        /* ============ 按钮样式 ============ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border-radius: 25px;
+            border: none;
+            font-family: var(--font-doodle);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.25s var(--transition-bounce);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn:active {
+            transform: scale(0.9);
+        }
+        /* 波纹效果 */
+        .btn .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: rippleEffect 0.6s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        .btn-primary {
+            background: var(--blue-main);
+            color: white;
+            box-shadow: var(--shadow-btn);
+            border: 2px solid transparent;
+        }
+        .btn-primary:active {
+            background: var(--blue-deep);
+            box-shadow: 0 2px 6px rgba(74, 140, 199, 0.3);
+        }
+        .btn-outline {
+            background: var(--white);
+            color: var(--blue-deep);
+            border: 2px dashed var(--blue-main);
+            box-shadow: var(--shadow-soft);
+        }
+        .btn-pink {
+            background: var(--pink);
+            color: white;
+            box-shadow: 0 3px 10px rgba(255, 184, 198, 0.35);
+            border: 2px solid transparent;
+        }
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            border-radius: 20px;
+        }
+        .btn-tag {
+            padding: 5px 12px;
+            font-size: 0.7rem;
+            border-radius: 18px;
+            background: var(--blue-light);
+            color: var(--blue-deep);
+            border: 1.5px dashed #C0DCF5;
+            font-family: var(--font-doodle);
+            cursor: pointer;
+            transition: all 0.2s var(--transition-bounce);
+            white-space: nowrap;
+        }
+        .btn-tag:active {
+            transform: scale(0.88);
+            background: #C8E0F8;
+        }
+        .btn-tag.selected {
+            background: var(--blue-main);
+            color: white;
+            border-color: var(--blue-deep);
+            box-shadow: var(--shadow-btn);
+        }
+
+        /* ============ 分类选择器 ============ */
+        .category-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .category-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 10px 8px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.25s var(--transition-bounce);
+            min-width: 55px;
+            border: 2px dashed transparent;
+            background: rgba(255, 255, 255, 0.5);
+            position: relative;
+        }
+        .category-item:active {
+            transform: scale(0.85);
+        }
+        .category-item.selected {
+            background: var(--blue-light);
+            border-color: var(--blue-main);
+            box-shadow: var(--shadow-soft);
+            animation: popIn 0.35s var(--transition-bounce);
+        }
+        @keyframes popIn {
+            0% {
+                transform: scale(0.7);
+            }
+            60% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        .category-item .cat-emoji {
+            font-size: 1.6rem;
+            transition: transform 0.3s var(--transition-bounce);
+        }
+        .category-item:active .cat-emoji {
+            transform: scale(1.3) rotate(-10deg);
+        }
+        .category-item .cat-name {
+            font-size: 0.65rem;
+            color: var(--text-mid);
+            font-family: var(--font-doodle);
+        }
+
+        /* ============ 金额输入 ============ */
+        .amount-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--white);
+            border-radius: var(--radius-md);
+            padding: 8px 14px;
+            border: 2px dashed #D0E8FA;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s;
+        }
+        .amount-input-wrapper:focus-within {
+            border-color: var(--blue-main);
+            box-shadow: 0 0 0 4px rgba(124, 184, 240, 0.15);
+            transform: scale(1.02);
+        }
+        .amount-input-wrapper .currency-sign {
+            font-size: 1.5rem;
+            color: var(--blue-deep);
+            font-family: var(--font-doodle);
+            font-weight: bold;
+        }
+        .amount-input-wrapper input {
+            flex: 1;
+            border: none;
+            font-size: 1.6rem;
+            font-family: var(--font-doodle);
+            color: var(--text-dark);
+            outline: none;
+            background: transparent;
+            letter-spacing: 2px;
+            min-width: 60px;
+        }
+        .amount-input-wrapper input::placeholder {
+            color: #C8D8E8;
+            letter-spacing: 1px;
+        }
+
+        /* ============ 快捷金额 ============ */
+        .quick-amounts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .quick-amount-btn {
+            padding: 7px 13px;
+            border-radius: 20px;
+            background: var(--white);
+            border: 1.5px dashed #D0E8FA;
+            font-family: var(--font-doodle);
+            font-size: 0.78rem;
+            color: var(--text-mid);
+            cursor: pointer;
+            transition: all 0.2s var(--transition-bounce);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+        .quick-amount-btn:active {
+            transform: scale(0.85);
+            background: var(--blue-light);
+            border-color: var(--blue-main);
+            color: var(--blue-deep);
+        }
+
+        /* ============ 记录列表 ============ */
+        .record-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 12px;
+            border-radius: var(--radius-md);
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.65);
+            border: 1.5px dashed #E0ECF8;
+            transition: all 0.25s var(--transition-bounce);
+            cursor: pointer;
+            animation: slideInItem 0.3s var(--transition-smooth);
+        }
+        @keyframes slideInItem {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .record-item:active {
+            transform: scale(0.96);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .record-item .rec-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            border: 2px dashed #D0E8FA;
+            background: var(--white);
+        }
+        .record-item .rec-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .record-item .rec-category {
+            font-family: var(--font-doodle);
+            font-size: 0.85rem;
+            color: var(--text-dark);
+        }
+        .record-item .rec-time {
+            font-size: 0.65rem;
+            color: var(--text-light);
+            margin-top: 1px;
+        }
+        .record-item .rec-tags {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-top: 3px;
+        }
+        .rec-tag-mini {
+            font-size: 0.6rem;
+            padding: 2px 7px;
+            border-radius: 10px;
+            background: var(--blue-light);
+            color: var(--blue-deep);
+            font-family: var(--font-doodle);
+        }
+        .record-item .rec-amount {
+            font-family: var(--font-doodle);
+            font-size: 1.05rem;
+            font-weight: bold;
+            white-space: nowrap;
+            letter-spacing: 1px;
+        }
+
+        /* ============ 底部导航 ============ */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 8px 16px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 2px dashed #D0E8FA;
+            border-radius: 24px 24px 0 0;
+            z-index: 20;
+            box-shadow: 0 -4px 20px rgba(74, 140, 199, 0.1);
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s var(--transition-bounce);
+            position: relative;
+            font-family: var(--font-doodle);
+            font-size: 0.7rem;
+            color: var(--text-mid);
+            border: 2px dashed transparent;
+        }
+        .nav-item:active {
+            transform: scale(0.85);
+        }
+        .nav-item.active {
+            color: var(--blue-deep);
+            background: var(--blue-light);
+            border-color: var(--blue-main);
+            box-shadow: var(--shadow-soft);
+            animation: navPop 0.4s var(--transition-bounce);
+        }
+        @keyframes navPop {
+            0% {
+                transform: scale(0.8);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        .nav-item .nav-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s var(--transition-bounce);
+        }
+        .nav-item.active .nav-icon {
+            transform: translateY(-4px);
+        }
+        /* 中间大按钮 */
+        .nav-item.add-btn-nav {
+            background: var(--blue-main);
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 6px 20px rgba(74, 140, 199, 0.35);
+            border: 2px dashed white;
+            margin-top: -20px;
+            animation: floatBtn 3s ease-in-out infinite;
+        }
+        @keyframes floatBtn {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-8px);
+            }
+            70% {
+                transform: translateY(-3px);
+            }
+        }
+        .nav-item.add-btn-nav:active {
+            transform: scale(0.82) !important;
+            box-shadow: 0 3px 10px rgba(74, 140, 199, 0.4);
+        }
+        .nav-item.add-btn-nav.active {
+            background: var(--blue-deep);
+            animation: navPop 0.4s var(--transition-bounce);
+        }
+
+        /* ============ 标签管理 ============ */
+        .tag-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 13px;
+            border-radius: 20px;
+            background: var(--white);
+            border: 1.5px dashed #D0E8FA;
+            font-family: var(--font-doodle);
+            font-size: 0.78rem;
+            color: var(--text-mid);
+            cursor: pointer;
+            transition: all 0.2s var(--transition-bounce);
+            margin: 4px;
+        }
+        .tag-chip:active {
+            transform: scale(0.88);
+            background: #FFE8EC;
+            border-color: #FFB8C6;
+        }
+        .tag-chip .delete-tag {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #FFD0D8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #C06070;
+        }
+        .tag-chip .delete-tag:active {
+            background: #FF8899;
+            color: white;
+            transform: scale(1.2);
+        }
+
+        /* ============ 类型切换Tab ============ */
+        .type-tabs {
+            display: flex;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 25px;
+            padding: 4px;
+            border: 1.5px dashed #D0E8FA;
+        }
+        .type-tab {
+            flex: 1;
+            text-align: center;
+            padding: 9px 8px;
+            border-radius: 22px;
+            font-family: var(--font-doodle);
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.3s var(--transition-bounce);
+            color: var(--text-mid);
+            white-space: nowrap;
+            border: 2px solid transparent;
+            background: transparent;
+        }
+        .type-tab:active {
+            transform: scale(0.9);
+        }
+        .type-tab.active {
+            background: var(--white);
+            color: var(--blue-deep);
+            font-weight: bold;
+            box-shadow: var(--shadow-soft);
+            border-color: var(--blue-light);
+        }
+        .type-tab.tab-borrow.active {
+            color: #C06070;
+            border-color: #FFB8C6;
+            background: #FFF5F6;
+        }
+
+        /* ============ 弹窗 ============ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(60, 80, 100, 0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 100;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            animation: fadeIn 0.25s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal-sheet {
+            background: var(--white);
+            border-radius: 28px 28px 0 0;
+            padding: 20px 16px 30px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 70vh;
+            overflow-y: auto;
+            box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.15);
+            animation: slideUp 0.35s var(--transition-bounce);
+            border-top: 3px dashed #D0E8FA;
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+        .modal-handle {
+            width: 40px;
+            height: 5px;
+            background: #D0E0F0;
+            border-radius: 3px;
+            margin: 0 auto 14px;
+        }
+
+        /* ============ Toast ============ */
+        .toast {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-dark);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-family: var(--font-doodle);
+            font-size: 0.85rem;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s var(--transition-bounce);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+        .toast.show {
+            opacity: 1;
+            top: 75px;
+        }
+
+        /* ============ 空状态 ============ */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+            font-family: var(--font-doodle);
+        }
+        .empty-state .empty-emoji {
+            font-size: 4rem;
+            animation: gentleBounce 2.5s ease-in-out infinite;
+            display: block;
+        }
+
+        /* ============ 涂鸦装饰线 ============ */
+        .doodle-divider {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #C8D8E8;
+            letter-spacing: 4px;
+            margin: 6px 0;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        /* 响应式 */
+        @media (min-width: 400px) {
+            .category-item {
+                min-width: 62px;
+                padding: 11px 10px;
+            }
+            .category-item .cat-emoji {
+                font-size: 1.8rem;
+            }
+        }
+        @media (max-width: 340px) {
+            .overview-row {
+                gap: 6px;
+            }
+            .overview-item {
+                padding: 10px 5px;
+            }
+            .overview-item .amount {
+                font-size: 1rem;
+            }
+            .category-item {
+                min-width: 48px;
+                padding: 8px 5px;
+            }
+            .category-item .cat-emoji {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <!-- 顶部栏 -->
+        <div class="top-bar">
+            <div class="title-group">
+                <div class="logo-icon">🩵</div>
+                <div>
+                    <h1>小然记账</h1>
+                </div>
+            </div>
+            <div class="date-display" id="currentDate">📅 今天</div>
+        </div>
+
+        <!-- 页面内容 -->
+        <div class="page-content" id="pageContent">
+            <!-- 首页 -->
+            <div class="page active" id="page-home">
+                <!-- 月度概览 -->
+                <div class="overview-card">
+                    <div class="card-header">
+                        <span class="card-title"><span class="icon-dot"></span>📊 本月概览</span>
+                        <span style="font-size:0.7rem;color:var(--text-light);font-family:var(--font-doodle);" id="monthLabel"></span>
+                    </div>
+                    <div class="overview-row">
+                        <div class="overview-item" onclick="switchTab('expense')">
+                            <div class="amount expense-color" id="totalExpense">¥0</div>
+                            <div class="label">💸 支出</div>
+                        </div>
+                        <div class="overview-item" onclick="switchTab('income')">
+                            <div class="amount income-color" id="totalIncome">¥0</div>
+                            <div class="label">💰 收入</div>
+                        </div>
+                        <div class="overview-item">
+                            <div class="amount balance-color" id="totalBalance">¥0</div>
+                            <div class="label">✨ 结余</div>
+                        </div>
+                    </div>
+                    <div class="overview-row" style="margin-top:8px;">
+                        <div class="overview-item" style="background:rgba(255,240,242,0.7);border-color:#FFD0D8;">
+                            <div class="amount" style="color:#C06070;" id="totalBorrow">¥0</div>
+                            <div class="label">🤝 借入</div>
+                        </div>
+                        <div class="overview-item" style="background:rgba(255,245,235,0.7);border-color:#FFD8B8;">
+                            <div class="amount" style="color:#D08050;" id="totalLend">¥0</div>
+                            <div class="label">📤 借出</div>
+                        </div>
+                        <div class="overview-item" style="background:rgba(240,255,245,0.7);border-color:#B8E8C8;">
+                            <div class="amount" style="color:#4A9C6D;" id="totalCollect">¥0</div>
+                            <div class="label">📥 收款</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 借贷提醒 -->
+                <div class="loan-alert-card" id="loanAlert" style="display:none;">
+                    <span class="alert-icon">🔔</span>
+                    <span class="alert-text" id="loanAlertText"></span>
+                </div>
+
+                <!-- 最近记录 -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title"><span class="icon-dot"></span>📝 最近记录</span>
+                        <button class="btn btn-sm btn-outline" onclick="navigateTo('bills')">查看全部 →</button>
+                    </div>
+                    <div id="recentRecords"></div>
+                    <div class="empty-state" id="emptyRecent">
+                        <span class="empty-emoji">🌸</span>
+                        <p>还没有记录哦~<br>点击下方 + 开始记账吧！</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 记账页 -->
+            <div class="page" id="page-add">
+                <!-- 类型选择 -->
+                <div class="type-tabs" style="margin-bottom:14px;" id="typeTabs">
+                    <div class="type-tab active" data-type="expense" onclick="setRecordType('expense', this)">💸 支出</div>
+                    <div class="type-tab" data-type="income" onclick="setRecordType('income', this)">💰 收入</div>
+                    <div class="type-tab tab-borrow" data-type="borrow" onclick="setRecordType('borrow', this)">🤝 借入</div>
+                    <div class="type-tab tab-borrow" data-type="lend" onclick="setRecordType('lend', this)">📤 借出</div>
+                    <div class="type-tab" data-type="collect" onclick="setRecordType('collect', this)">📥 收款</div>
+                </div>
+
+                <!-- 金额输入 -->
+                <div class="amount-input-wrapper">
+                    <span class="currency-sign">¥</span>
+                    <input type="number" id="amountInput" placeholder="输入金额" step="0.01" min="0" inputmode="decimal">
+                </div>
+                <div class="quick-amounts" id="quickAmounts">
+                    <span class="quick-amount-btn" data-amount="10">¥10</span>
+                    <span class="quick-amount-btn" data-amount="20">¥20</span>
+                    <span class="quick-amount-btn" data-amount="30">¥30</span>
+                    <span class="quick-amount-btn" data-amount="50">¥50</span>
+                    <span class="quick-amount-btn" data-amount="100">¥100</span>
+                    <span class="quick-amount-btn" data-amount="200">¥200</span>
+                    <span class="quick-amount-btn" data-amount="500">¥500</span>
+                </div>
+
+                <!-- 分类选择 -->
+                <div class="card" style="margin-top:12px;">
+                    <div class="card-header"><span class="card-title">🏷️ 分类</span></div>
+                    <div class="category-grid" id="categoryGrid"></div>
+                </div>
+
+                <!-- 标签选择 -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🏷️ 标签</span>
+                        <button class="btn btn-sm btn-outline" onclick="openTagManager()">+ 管理</button>
+                    </div>
+                    <div id="tagSelection" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+                </div>
+
+                <!-- 时间 & 备注 -->
+                <div class="card">
+                    <div class="card-header"><span class="card-title">📝 详情</span></div>
+                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                        <input type="datetime-local" id="recordTime" style="flex:1;min-width:140px;padding:10px;border-radius:20px;border:1.5px dashed #D0E8FA;font-family:var(--font-doodle);font-size:0.8rem;outline:none;background:var(--white);">
+                        <input type="text" id="recordNote" placeholder="备注（可选）" style="flex:2;min-width:100px;padding:10px;border-radius:20px;border:1.5px dashed #D0E8FA;font-family:var(--font-doodle);font-size:0.8rem;outline:none;background:var(--white);">
+                    </div>
+                </div>
+
+                <!-- 提交按钮 -->
+                <button class="btn btn-primary" onclick="addRecord()" style="width:100%;padding:14px;font-size:1.05rem;margin-top:6px;border-radius:28px;">
+                    ✨ 记一笔
+                </button>
+                <div style="height:20px;"></div>
+            </div>
+
+            <!-- 账单页 -->
+            <div class="page" id="page-bills">
+                <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+                    <select id="filterType" onchange="renderBills()" style="padding:8px 12px;border-radius:20px;border:1.5px dashed #D0E8FA;font-family:var(--font-doodle);font-size:0.78rem;background:white;outline:none;">
+                        <option value="all">全部类型</option>
+                        <option value="expense">💸 支出</option>
+                        <option value="income">💰 收入</option>
+                        <option value="borrow">🤝 借入</option>
+                        <option value="lend">📤 借出</option>
+                        <option value="collect">📥 收款</option>
+                    </select>
+                    <input type="text" id="searchInput" placeholder="🔍 搜索..." oninput="renderBills()" style="flex:1;min-width:100px;padding:8px 12px;border-radius:20px;border:1.5px dashed #D0E8FA;font-family:var(--font-doodle);font-size:0.78rem;outline:none;background:white;">
+                </div>
+                <div id="billsList"></div>
+                <div class="empty-state" id="emptyBills">
+                    <span class="empty-emoji">🍃</span>
+                    <p>暂无记录</p>
+                </div>
+                <div style="height:20px;"></div>
+            </div>
+
+            <!-- 我的页 -->
+            <div class="page" id="page-me">
+                <div class="card">
+                    <div class="card-header"><span class="card-title">🏷️ 我的标签</span></div>
+                    <div id="myTags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+                    <button class="btn btn-sm btn-outline" onclick="openTagManager()" style="margin-top:8px;">+ 添加标签</button>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-title">📊 数据管理</span></div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <button class="btn btn-sm btn-outline" onclick="exportData()">📤 导出数据</button>
+                        <button class="btn btn-sm btn-outline" onclick="document.getElementById('importFile').click()">📥 导入数据</button>
+                        <button class="btn btn-sm btn-pink" onclick="confirmClearAll()">🗑️ 清空数据</button>
+                    </div>
+                    <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)">
+                </div>
+                <div class="card" style="text-align:center;padding:20px;">
+                    <p style="font-family:var(--font-doodle);color:var(--text-mid);font-size:0.8rem;">🩵 小然记账本 v1.0</p>
+                    <p style="font-family:var(--font-doodle);color:var(--text-light);font-size:0.7rem;">个人非商用 · 数据存于本地</p>
+                    <p style="font-family:var(--font-doodle);color:var(--text-light);font-size:0.65rem;">点击底部 + 开始记账 ✨</p>
+                </div>
+                <div style="height:20px;"></div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav" id="bottomNav">
+            <div class="nav-item active" data-page="home" onclick="navigateTo('home')">
+                <span class="nav-icon">🏠</span> 首页
+            </div>
+            <div class="nav-item" data-page="bills" onclick="navigateTo('bills')">
+                <span class="nav-icon">📋</span> 账单
+            </div>
+            <div class="nav-item add-btn-nav" data-page="add" onclick="navigateTo('add')">
+                <span>+</span>
+            </div>
+            <div class="nav-item" data-page="me" onclick="navigateTo('me')">
+                <span class="nav-icon">👤</span> 我的
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- 标签管理弹窗 -->
+    <div class="modal-overlay" id="tagModal" style="display:none;" onclick="closeTagManager(event)">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <h3 style="font-family:var(--font-doodle);color:var(--text-dark);margin-bottom:12px;">🏷️ 管理标签</h3>
+            <div style="display:flex;gap:8px;margin-bottom:14px;">
+                <input type="text" id="newTagInput" placeholder="输入新标签名" style="flex:1;padding:10px;border-radius:20px;border:1.5px dashed #D0E8FA;font-family:var(--font-doodle);font-size:0.8rem;outline:none;">
+                <button class="btn btn-primary btn-sm" onclick="addTag()">添加</button>
+            </div>
+            <div id="tagManagerList" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+            <button class="btn btn-outline" onclick="closeTagManagerDirect()" style="width:100%;margin-top:16px;">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 数据管理 ====================
+        const STORAGE_KEY = 'doodle_account_book_data';
+        const TAGS_KEY = 'doodle_account_book_tags';
+
+        // 默认标签
+        const defaultTags = ['日常', '必需', '开心', '冲动消费', '计划内', '意外', '工作', '生活', '学习', '社交'];
+
+        // 分类配置
+        const categoryConfig = {
+            expense: [
+                { emoji: '🍜', name: '餐饮' }, { emoji: '🛍️', name: '购物' }, { emoji: '🚗', name: '交通' },
+                { emoji: '🎮', name: '娱乐' }, { emoji: '🏠', name: '住房' }, { emoji: '💊', name: '医疗' },
+                { emoji: '📚', name: '教育' }, { emoji: '👗', name: '服装' }, { emoji: '💄', name: '美妆' },
+                { emoji: '🍬', name: '零食' }, { emoji: '🐱', name: '宠物' }, { emoji: '📌', name: '其他' },
+            ],
+            income: [
+                { emoji: '💰', name: '工资' }, { emoji: '💼', name: '兼职' }, { emoji: '🧧', name: '红包' },
+                { emoji: '💵', name: '退款' }, { emoji: '🎁', name: '礼物' }, { emoji: '📈', name: '理财' },
+                { emoji: '📌', name: '其他' },
+            ],
+            borrow: [
+                { emoji: '🤝', name: '借入' }, { emoji: '🏦', name: '贷款' }, { emoji: '👨‍👩‍👧', name: '家人' },
+                { emoji: '👫', name: '朋友' }, { emoji: '📌', name: '其他' },
+            ],
+            lend: [
+                { emoji: '📤', name: '借出' }, { emoji: '👫', name: '朋友' }, { emoji: '👨‍👩‍👧', name: '家人' },
+                { emoji: '📌', name: '其他' },
+            ],
+            collect: [
+                { emoji: '📥', name: '收款' }, { emoji: '💵', name: '还款' }, { emoji: '🧧', name: '收回' },
+                { emoji: '📌', name: '其他' },
+            ],
+        };
+
+        // 当前记账类型
+        let currentRecordType = 'expense';
+        let selectedCategory = null;
+        let selectedTags = [];
+
+        // 获取数据
+        function getRecords() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveRecords(records) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+        }
+
+        function getTags() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(TAGS_KEY));
+                return (saved && saved.length > 0) ? saved : [...defaultTags];
+            } catch (e) {
+                return [...defaultTags];
+            }
+        }
+
+        function saveTags(tags) {
+            localStorage.setItem(TAGS_KEY, JSON.stringify(tags));
+        }
+
+        // 生成唯一ID
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2, 6);
+        }
+
+        // ==================== Toast ====================
+        let toastTimer;
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 1800);
+        }
+
+        // ==================== 波纹效果 ====================
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn, .btn-primary, .btn-outline, .btn-pink, .btn-sm, .btn-tag, .quick-amount-btn');
+            if (!btn) return;
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            const rect = btn.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+            btn.appendChild(ripple);
+            ripple.addEventListener('animationend', () => ripple.remove());
+        });
+
+        // ==================== 页面导航 ====================
+        function navigateTo(pageName) {
+            // 更新页面
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const targetPage = document.getElementById('page-' + pageName);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                // 重新触发动画
+                targetPage.style.animation = 'none';
+                targetPage.offsetHeight;
+                targetPage.style.animation = 'fadeSlideIn 0.35s var(--transition-smooth)';
+            }
+
+            // 更新导航
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            const navItem = document.querySelector(`.nav-item[data-page="${pageName}"]`);
+            if (navItem) navItem.classList.add('active');
+
+            // 滚动到顶部
+            document.getElementById('pageContent').scrollTop = 0;
+
+            // 刷新对应页面
+            if (pageName === 'home') refreshHome();
+            if (pageName === 'bills') renderBills();
+            if (pageName === 'add') refreshAddPage();
+            if (pageName === 'me') refreshMePage();
+        }
+
+        function switchTab(type) {
+            navigateTo('add');
+            setRecordType(type, document.querySelector(`.type-tab[data-type="${type}"]`));
+        }
+
+        // ==================== 首页刷新 ====================
+        function refreshHome() {
+            const records = getRecords();
+            const now = new Date();
+            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+            const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).getTime();
+
+            const monthRecords = records.filter(r => {
+                const t = new Date(r.date).getTime();
+                return t >= monthStart && t <= monthEnd;
+            });
+
+            let totalExpense = 0,
+                totalIncome = 0,
+                totalBorrow = 0,
+                totalLend = 0,
+                totalCollect = 0;
+            monthRecords.forEach(r => {
+                const amt = parseFloat(r.amount) || 0;
+                if (r.type === 'expense') totalExpense += amt;
+                if (r.type === 'income') totalIncome += amt;
+                if (r.type === 'borrow') totalBorrow += amt;
+                if (r.type === 'lend') totalLend += amt;
+                if (r.type === 'collect') totalCollect += amt;
+            });
+
+            const balance = totalIncome + totalBorrow + totalCollect - totalExpense - totalLend;
+
+            document.getElementById('totalExpense').textContent = '¥' + totalExpense.toFixed(2);
+            document.getElementById('totalIncome').textContent = '¥' + totalIncome.toFixed(2);
+            document.getElementById('totalBalance').textContent = '¥' + balance.toFixed(2);
+            document.getElementById('totalBorrow').textContent = '¥' + totalBorrow.toFixed(2);
+            document.getElementById('totalLend').textContent = '¥' + totalLend.toFixed(2);
+            document.getElementById('totalCollect').textContent = '¥' + totalCollect.toFixed(2);
+
+            // 月份标签
+            document.getElementById('monthLabel').textContent = (now.getMonth() + 1) + '月';
+
+            // 借贷提醒
+            const loanAlert = document.getElementById('loanAlert');
+            const loanAlertText = document.getElementById('loanAlertText');
+            if (totalBorrow > 0 && totalLend > 0) {
+                loanAlert.style.display = 'flex';
+                loanAlertText.textContent = `你借入了 ¥${totalBorrow.toFixed(2)}，同时借出了 ¥${totalLend.toFixed(2)}，记得及时处理哦~`;
+            } else if (totalBorrow > 0) {
+                loanAlert.style.display = 'flex';
+                loanAlertText.textContent = `本月有借入 ¥${totalBorrow.toFixed(2)}，别忘了还款计划~`;
+            } else if (totalLend > 0) {
+                loanAlert.style.display = 'flex';
+                loanAlertText.textContent = `本月借出了 ¥${totalLend.toFixed(2)}，记得提醒朋友还款~`;
+            } else {
+                loanAlert.style.display = 'none';
+            }
+
+            // 最近记录
+            const recent = records.slice().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0,
+                6);
+            const recentContainer = document.getElementById('recentRecords');
+            const emptyRecent = document.getElementById('emptyRecent');
+            if (recent.length === 0) {
+                recentContainer.innerHTML = '';
+                emptyRecent.style.display = 'block';
+            } else {
+                emptyRecent.style.display = 'none';
+                recentContainer.innerHTML = recent.map(r => createRecordHTML(r)).join('');
+            }
+
+            updateCurrentDate();
+        }
+
+        function updateCurrentDate() {
+            const now = new Date();
+            const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+            document.getElementById('currentDate').textContent =
+                `📅 ${now.getFullYear()}/${(now.getMonth()+1)}/${now.getDate()} 周${weekdays[now.getDay()]}`;
+        }
+
+        // ==================== 记录HTML生成 ====================
+        function createRecordHTML(r) {
+            const typeConfig = {
+                expense: { iconBg: '#FFF0F0', sign: '-', color: '#E07070', label: '支出' },
+                income: { iconBg: '#F0FFF4', sign: '+', color: '#4A9C6D', label: '收入' },
+                borrow: { iconBg: '#FFF5F6', sign: '+', color: '#C06070', label: '借入' },
+                lend: { iconBg: '#FFF8F0', sign: '-', color: '#D08050', label: '借出' },
+                collect: { iconBg: '#F0FFF8', sign: '+', color: '#4A9C6D', label: '收款' },
+            };
+            const tc = typeConfig[r.type] || typeConfig['expense'];
+            const cat = (categoryConfig[r.type] || []).find(c => c.name === r.category) || { emoji: '📌', name: r
+                    .category || '其他' };
+            const dateObj = new Date(r.date);
+            const timeStr =
+                `${dateObj.getFullYear()}/${(dateObj.getMonth()+1).toString().padStart(2,'0')}/${dateObj.getDate().toString().padStart(2,'0')} ${dateObj.getHours().toString().padStart(2,'0')}:${dateObj.getMinutes().toString().padStart(2,'0')}`;
+            const tagsHTML = (r.tags || []).map(t => `<span class="rec-tag-mini">${t}</span>`).join('');
+
+            return `
+            <div class="record-item" onclick="deleteRecordPrompt('${r.id}')" title="点击删除此记录">
+              <div class="rec-icon" style="background:${tc.iconBg};">${cat.emoji}</div>
+              <div class="rec-info">
+                <div class="rec-category">${cat.name} · ${tc.label}</div>
+                <div class="rec-time">🕐 ${timeStr}</div>
+                ${r.note ? `<div style="font-size:0.65rem;color:var(--text-light);">💬 ${r.note}</div>` : ''}
+                <div class="rec-tags">${tagsHTML}</div>
+              </div>
+              <div class="rec-amount" style="color:${tc.color};">${tc.sign}¥${parseFloat(r.amount).toFixed(2)}</div>
+            </div>
+          `;
+        }
+
+        function deleteRecordPrompt(id) {
+            if (confirm('确定要删除这条记录吗？此操作不可恢复哦~')) {
+                const records = getRecords().filter(r => r.id !== id);
+                saveRecords(records);
+                showToast('🗑️ 记录已删除');
+                refreshHome();
+                renderBills();
+            }
+        }
+
+        // ==================== 记账页 ====================
+        function setRecordType(type, tabElement) {
+            currentRecordType = type;
+            selectedCategory = null;
+            document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+            if (tabElement) tabElement.classList.add('active');
+            renderCategories();
+            renderTagSelection();
+            // 更新快捷金额
+            const quickAmounts = document.getElementById('quickAmounts');
+            if (type === 'borrow' || type === 'lend') {
+                quickAmounts.querySelectorAll('.quick-amount-btn').forEach(b => {
+                    const amt = parseInt(b.dataset.amount);
+                    if (amt < 100) b.style.display = 'none';
+                    else b.style.display = '';
+                });
+            } else {
+                quickAmounts.querySelectorAll('.quick-amount-btn').forEach(b => b.style.display = '');
+            }
+        }
+
+        function renderCategories() {
+            const grid = document.getElementById('categoryGrid');
+            const cats = categoryConfig[currentRecordType] || categoryConfig['expense'];
+            grid.innerHTML = cats.map(c => `
+            <div class="category-item ${selectedCategory === c.name ? 'selected' : ''}" 
+                 onclick="selectCategory('${c.name}', this)" data-cat="${c.name}">
+              <span class="cat-emoji">${c.emoji}</span>
+              <span class="cat-name">${c.name}</span>
+            </div>
+          `).join('');
+        }
+
+        function selectCategory(catName, element) {
+            selectedCategory = catName;
+            document.querySelectorAll('#categoryGrid .category-item').forEach(el => el.classList.remove('selected'));
+            if (element) {
+                element.classList.add('selected');
+                element.style.animation = 'none';
+                element.offsetHeight;
+                element.style.animation = 'popIn 0.35s var(--transition-bounce)';
+            }
+        }
+
+        function renderTagSelection() {
+            const container = document.getElementById('tagSelection');
+            const tags = getTags();
+            container.innerHTML = tags.map(t => `
+            <span class="btn-tag ${selectedTags.includes(t) ? 'selected' : ''}" 
+                  onclick="toggleTag('${t}', this)">${t}</span>
+          `).join('');
+        }
+
+        function toggleTag(tagName, element) {
+            if (selectedTags.includes(tagName)) {
+                selectedTags = selectedTags.filter(t => t !== tagName);
+                if (element) element.classList.remove('selected');
+            } else {
+                selectedTags.push(tagName);
+                if (element) {
+                    element.classList.add('selected');
+                    element.style.animation = 'none';
+                    element.offsetHeight;
+                    element.style.animation = 'popIn 0.3s var(--transition-bounce)';
+                }
+            }
+        }
+
+        function refreshAddPage() {
+            renderCategories();
+            renderTagSelection();
+            document.getElementById('amountInput').value = '';
+            document.getElementById('recordNote').value = '';
+            selectedCategory = null;
+            selectedTags = [];
+            // 设置默认时间为当前
+            const now = new Date();
+            document.getElementById('recordTime').value =
+                now.getFullYear() + '-' +
+                (now.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                now.getDate().toString().padStart(2, '0') + 'T' +
+                now.getHours().toString().padStart(2, '0') + ':' +
+                now.getMinutes().toString().padStart(2, '0');
+            setRecordType(currentRecordType, document.querySelector(`.type-tab[data-type="${currentRecordType}"]`));
+        }
+
+        function addRecord() {
+            const amountStr = document.getElementById('amountInput').value.trim();
+            const amount = parseFloat(amountStr);
+            if (!amountStr || isNaN(amount) || amount <= 0) {
+                showToast('⚠️ 请输入有效的金额~');
+                document.getElementById('amountInput').focus();
+                return;
+            }
+            if (!selectedCategory) {
+                showToast('⚠️ 请选择一个分类~');
+                return;
+            }
+            const note = document.getElementById('recordNote').value.trim();
+            let dateStr = document.getElementById('recordTime').value;
+            let date;
+            if (dateStr) {
+                date = new Date(dateStr).toISOString();
+            } else {
+                date = new Date().toISOString();
+            }
+
+            const record = {
+                id: generateId(),
+                type: currentRecordType,
+                amount: Math.round(amount * 100) / 100,
+                category: selectedCategory,
+                tags: [...selectedTags],
+                note: note,
+                date: date,
+                createdAt: Date.now(),
+            };
+
+            const records = getRecords();
+            records.push(record);
+            saveRecords(records);
+            showToast('✅ 记录成功！');
+
+            // 重置表单
+            document.getElementById('amountInput').value = '';
+            document.getElementById('recordNote').value = '';
+            selectedCategory = null;
+            selectedTags = [];
+            renderCategories();
+            renderTagSelection();
+            const now = new Date();
+            document.getElementById('recordTime').value =
+                now.getFullYear() + '-' +
+                (now.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                now.getDate().toString().padStart(2, '0') + 'T' +
+                now.getHours().toString().padStart(2, '0') + ':' +
+                now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('amountInput').focus();
+
+            // 自动刷新首页
+            refreshHome();
+        }
+
+        // 快捷金额点击
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('quick-amount-btn')) {
+                const amt = e.target.dataset.amount;
+                document.getElementById('amountInput').value = amt;
+                document.getElementById('amountInput').focus();
+                // 小动画
+                e.target.style.transform = 'scale(0.85)';
+                setTimeout(() => { e.target.style.transform = ''; }, 200);
+            }
+        });
+
+        // ==================== 账单页 ====================
+        function renderBills() {
+            const records = getRecords().slice().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            const filterType = document.getElementById('filterType').value;
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+
+            let filtered = records;
+            if (filterType !== 'all') {
+                filtered = filtered.filter(r => r.type === filterType);
+            }
+            if (searchTerm) {
+                filtered = filtered.filter(r => {
+                    return (r.category || '').toLowerCase().includes(searchTerm) ||
+                        (r.note || '').toLowerCase().includes(searchTerm) ||
+                        (r.tags || []).some(t => t.toLowerCase().includes(searchTerm)) ||
+                        (parseFloat(r.amount).toFixed(2)).includes(searchTerm);
+                });
+            }
+
+            const container = document.getElementById('billsList');
+            const emptyBills = document.getElementById('emptyBills');
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                emptyBills.style.display = 'block';
+            } else {
+                emptyBills.style.display = 'none';
+                container.innerHTML = filtered.map((r, i) => {
+                    return `<div style="animation-delay:${i*0.03}s">${createRecordHTML(r)}</div>`;
+                }).join('');
+            }
+        }
+
+        // ==================== 我的页 ====================
+        function refreshMePage() {
+            const tags = getTags();
+            document.getElementById('myTags').innerHTML = tags.map(t =>
+                `<span class="tag-chip">${t}</span>`
+            ).join('');
+        }
+
+        // ==================== 标签管理 ====================
+        function openTagManager() {
+            const modal = document.getElementById('tagModal');
+            modal.style.display = 'flex';
+            renderTagManagerList();
+            document.getElementById('newTagInput').value = '';
+            setTimeout(() => document.getElementById('newTagInput').focus(), 300);
+        }
+
+        function closeTagManager(event) {
+            if (event.target === document.getElementById('tagModal')) {
+                document.getElementById('tagModal').style.display = 'none';
+                refreshMePage();
+                renderTagSelection();
+            }
+        }
+
+        function closeTagManagerDirect() {
+            document.getElementById('tagModal').style.display = 'none';
+            refreshMePage();
+            renderTagSelection();
+        }
+
+        function renderTagManagerList() {
+            const tags = getTags();
+            document.getElementById('tagManagerList').innerHTML = tags.map(t => `
+            <span class="tag-chip">
+              ${t}
+              <span class="delete-tag" onclick="deleteTag('${t}')">×</span>
+            </span>
+          `).join('');
+        }
+
+        function addTag() {
+            const input = document.getElementById('newTagInput');
+            const name = input.value.trim();
+            if (!name) {
+                showToast('⚠️ 请输入标签名~');
+                return;
+            }
+            const tags = getTags();
+            if (tags.includes(name)) {
+                showToast('⚠️ 标签已存在~');
+                return;
+            }
+            tags.push(name);
+            saveTags(tags);
+            input.value = '';
+            renderTagManagerList();
+            renderTagSelection();
+            refreshMePage();
+            showToast('✅ 标签已添加！');
+            input.focus();
+        }
+
+        function deleteTag(tagName) {
+            if (!confirm(`确定删除标签「${tagName}」吗？`)) return;
+            const tags = getTags().filter(t => t !== tagName);
+            saveTags(tags);
+            selectedTags = selectedTags.filter(t => t !== tagName);
+            renderTagManagerList();
+            renderTagSelection();
+            refreshMePage();
+            showToast('🗑️ 标签已删除');
+        }
+
+        // ==================== 数据导入导出 ====================
+        function exportData() {
+            const data = {
+                records: getRecords(),
+                tags: getTags(),
+                exportTime: new Date().toISOString(),
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '小然记账_备份_' + new Date().toISOString().slice(0, 10) + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('📤 数据已导出！');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (!data.records || !Array.isArray(data.records)) throw new Error('格式错误');
+                    if (confirm(
+                            `即将导入 ${data.records.length} 条记录，是否覆盖当前数据？\n（选择"取消"将合并数据）`
+                            )) {
+                        saveRecords(data.records);
+                        if (data.tags && Array.isArray(data.tags)) saveTags(data.tags);
+                    } else {
+                        const merged = [...getRecords(), ...data.records];
+                        saveRecords(merged);
+                        if (data.tags && Array.isArray(data.tags)) {
+                            const mergedTags = [...new Set([...getTags(), ...data.tags])];
+                            saveTags(mergedTags);
+                        }
+                    }
+                    showToast('📥 数据导入成功！');
+                    refreshHome();
+                    renderBills();
+                    refreshMePage();
+                    renderTagSelection();
+                } catch (err) {
+                    showToast('⚠️ 文件格式不正确~');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function confirmClearAll() {
+            if (confirm('⚠️ 确定要清空所有记账数据吗？\n此操作不可恢复！\n\n建议先导出备份哦~')) {
+                if (confirm('再次确认：真的要清空吗？')) {
+                    localStorage.removeItem(STORAGE_KEY);
+                    showToast('🗑️ 所有数据已清空');
+                    refreshHome();
+                    renderBills();
+                    refreshMePage();
+                }
+            }
+        }
+
+        // ==================== 键盘处理 ====================
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.getElementById('page-add').classList.contains('active')) {
+                e.preventDefault();
+                addRecord();
+            }
+        });
+
+        // ==================== 初始化 ====================
+        function init() {
+            // 设置默认时间
+            const now = new Date();
+            document.getElementById('recordTime').value =
+                now.getFullYear() + '-' +
+                (now.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                now.getDate().toString().padStart(2, '0') + 'T' +
+                now.getHours().toString().padStart(2, '0') + ':' +
+                now.getMinutes().toString().padStart(2, '0');
+            updateCurrentDate();
+            renderCategories();
+            renderTagSelection();
+            refreshHome();
+            renderBills();
+            refreshMePage();
+
+            // 默认显示首页
+            navigateTo('home');
+        }
+
+        init();
+
+        console.log('🩵 小然记账本已就绪！');
+        console.log('📱 在手机浏览器中打开，点击"添加到主屏幕"即可像APP一样使用~');
+        console.log('💾 所有数据存储在浏览器本地，请定期导出备份哦~');
+        console.log('✨ 点击底部 + 按钮开始记账吧！');
+    </script>
+</body>
+</html>
