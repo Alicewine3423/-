@@ -1,11 +1,11 @@
 {
-  "name": "涂鸦记账本",
+  "name": "小然记账",
   "short_name": "记账",
   "start_url": "/-/",
   "display": "standalone",
   "background_color": "#E8F4FD",
   "theme_color": "#7CB8F0",
-  "description": "少女心涂鸦记账本",
+  "description": "专属少女心涂鸦记账本",
   "icons": [
     {
       "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAnFJREFUWEfFl8FtwjAURd+TABMwQkdIZIAOkW7QERghHSEjMEJhAzIBTFA2YISwQTNB3iNHjp2fz7dFpD9ZtuN/73u/7w8Ja63gdrsRz/M8fj4ej2+cn8/nr8ViEcfjcUyn0/dqtXo3DEPYtg1r2244HAYsy0rTNB3LsgBBEIAxlud5Yprmr4AgCCJN07MgCJCOYx3HsRkRGqBlWUaSJEiSBGma4na7fQBQVRXL5RLT6bQjoCjKH/DxeET1YN0sAKQoiudm02u1Go7jaFYhQHc8YHysDdgD6AN8CAgGcYFGo1FPAJ0twP8TZ1nWQnM6nYYBSAqkl0OhykPkGG/X6zVOp9POQ/rUDmCz2eA/dodScYV4NBr90oJpB4AJmAflSK1WC93YBhB5YIwtioKtV6vVzl+4A7BYLEoJ4jyTyaQE5h3gI9AAuPD9fr8gJ/KicDgAr5TE0AW8tQN4sULsogD0z4pYXUNAJRCcWYHwwpeDBlwH5NnC8hwOhwVQnUf+5QBcBxRCRLQoFUXBV5B0LgKP/Qj7BEfDMI4dAG9fWTjQthPn+X6/RxRFWFVNkucBISKdIghcRIaInDlgD6APuPqPx2PJ3Ha73YAcXgkA5/J4PBaHwyE+Ho8f2+0W5/OpC/AnIu4LVk1tJh+Bn1LqyRDRMAxLol6FwO1268WE1+s1Mll4H0C47gDCUHQymRhZln2JiwBhGHYNhLMkZ8o5+ghwu91K5D0A0Vtgrd2M+Pxw86oQ0P9R8rk0Tb+9uBYowIbrAAAAAElFTkSuQmCC",
